@@ -8,10 +8,9 @@
     android:layout_margin="8dp">
 
     <com.example.k_matsushita.pathtest.TestView
-        android:layout_width="352dp"
-        android:layout_height="479dp"
-        tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp" />
+        android:id="@+id/view"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"/>
 
 
 </android.support.constraint.ConstraintLayout>
