@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
 
         TestView view = (TestView)findViewById(R.id.view);
         view.setImage(ImageSource.resource(R.drawable.img));
-        view.setSVG(pathSvg);
+        view.setSVG(rectSvg);
     }
 
 }

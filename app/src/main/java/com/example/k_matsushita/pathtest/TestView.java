@@ -44,6 +44,7 @@ public class TestView extends SubsamplingScaleImageView {
         super.onDraw(canvas);
         if (!isReady() || s == null) return;
         createPath();
+        if (path == null) return;
         canvas.drawPath(path,paint);
     }
 
@@ -79,16 +80,6 @@ public class TestView extends SubsamplingScaleImageView {
                         drawLine((Element)node,magWidth,magHeight);
                         break;
                 }
-                if (paint == null) {
-                    paint = new Paint();
-
-                    paint.setAntiAlias(true);
-                    paint.setStyle(Paint.Style.STROKE);
-                    paint.setStrokeCap(Paint.Cap.ROUND);
-                    paint.setStrokeJoin(Paint.Join.ROUND);
-                    paint.setStrokeWidth(Float.parseFloat(((Element) node).getAttribute("stroke-width")) * dp);
-                    paint.setColor(Color.parseColor(((Element) node).getAttribute("stroke")));
-                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,14 +88,28 @@ public class TestView extends SubsamplingScaleImageView {
 
     private void drawLine(Element line, float magWidth, float magHeight) {
         path = new Path();
-        float vx = Float.parseFloat(line.getAttribute("x1")) * magWidth;
-        float vy = Float.parseFloat(line.getAttribute("y1")) * magHeight;
-        float x = Float.parseFloat(line.getAttribute("x2")) * magWidth * getScale();
-        float y = Float.parseFloat(line.getAttribute("y2")) * magHeight * getScale();
+        // line は絶対位置だが、 rLineTo は相対位置
+        float vx = Float.parseFloat(line.getAttribute("x1"));
+        float vy = Float.parseFloat(line.getAttribute("y1"));
+        float x = Float.parseFloat(line.getAttribute("x2")) - vx;
+        float y = Float.parseFloat(line.getAttribute("y2")) - vy;
+        vx *= magWidth;
+        vy *= magHeight;
+        x *= magWidth * getScale();
+        y *= magHeight * getScale();
 
         PointF pointF = sourceToViewCoord(vx, vy);
         path.moveTo(pointF.x,pointF.y);
         path.rLineTo(x,y);
+
+        paint = new Paint();
+
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeWidth(Float.parseFloat(line.getAttribute("stroke-width")) * dp);
+        paint.setColor(Color.parseColor(line.getAttribute("stroke")));
 
         /*
         x1='58.15625'
@@ -133,6 +138,16 @@ public class TestView extends SubsamplingScaleImageView {
 
         path.addOval(pointF.x,pointF.y, pointF.x + x, pointF.y + y, Path.Direction.CW);
 
+        paint = new Paint();
+
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeWidth(Float.parseFloat(ellipse.getAttribute("stroke-width")) * dp);
+        paint.setColor(Color.parseColor(ellipse.getAttribute("stroke")));
+
+
         /*
         rx='67'
         ry='65'
@@ -156,7 +171,18 @@ public class TestView extends SubsamplingScaleImageView {
         x *= magWidth * getScale();
         y *= magHeight * getScale();
 
-        path.addRect(pointF.x,pointF.y,pointF.x + x,pointF.y + y, Path.Direction.CW);
+//        path.addRect(pointF.x,pointF.y,pointF.x + x,pointF.y + y, Path.Direction.CW);
+//        path.moveTo(pointF.x,pointF.y);
+        path.rLineTo(pointF.x,pointF.y);
+
+        paint = new Paint();
+
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeWidth(Float.parseFloat(rect.getAttribute("stroke-width")) * dp);
+        paint.setColor(Color.parseColor(rect.getAttribute("stroke")));
 
         /*
         width='52'
@@ -191,6 +217,15 @@ public class TestView extends SubsamplingScaleImageView {
             float y = Float.parseFloat(lhoge[1]) * magHeight * getScale();
             path.rLineTo(x,y);
         }
+
+        paint = new Paint();
+
+        paint.setAntiAlias(true);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeCap(Paint.Cap.ROUND);
+        paint.setStrokeJoin(Paint.Join.ROUND);
+        paint.setStrokeWidth(Float.parseFloat(pathE.getAttribute("stroke-width")) * dp);
+        paint.setColor(Color.parseColor(pathE.getAttribute("stroke")));
 
         /*
         d="M218.5 139.5l0 0l-1 0l-2 0l-1 0l-2 0l-1 0l-1 0l-2 0l-1 0l-1 0l-1 0l2 -1l4 -2l5 -2l4 -2l11 -4l10 -1l10 -3l8 0l11 0l6 0l6 0l5 2l5 7l3 7l2 8l2 8l1 10l0 9l0 10l-4 8l-6 9l-9 10l-9 6l-9 6l-4 1l-8 4l-13 4l-8 1l-5 0l-5 0l-5 -3l-2 -4l-2 -8l-1 -7l0 -10l0 -8l0 -9l6 -9l5 -7l7 -6l4 -1l11 -7l6 -1l7 0l6 0l5 0l5 0l4 5l3 5l1 8l1 8l0 11l-5 25l-6 7l-5 4l-5 2l-9 5l-6 1l-3 1l-4 0l-4 0l-3 0l-1 -2l-2 -2l0 -2l0 -4l0 -2l0 -2l0 -1l1 -2l4 -3l2 -2l2 -1l4 -2l3 -1l2 -2l2 -1"
